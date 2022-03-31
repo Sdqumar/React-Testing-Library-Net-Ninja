@@ -5,21 +5,33 @@ import { Link } from "react-router-dom";
 
 export default function FollowersList() {
   const [followers, setFollowers] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchFollowers();
   }, []);
 
   const fetchFollowers = async () => {
-    const { data } = await axios.get("https://randomuser.me/api/?results=5");
-    setFollowers(data.results);
+    try {
+      const { data, status } = await axios.get(
+        "https://randomuser.me/api/?results=5"
+      );
+      setFollowers(data.results);
+    } catch (error) {
+      setError("Network Error");
+    }
   };
-
+  console.log(error);
   return (
     <div className="followerslist-container">
+      {error && <h3>{error}</h3>}
       <div>
         {followers.map((follower, index) => (
-          <div className="follower-item" data-testId={`follower-item-${index}`}>
+          <div
+            className="follower-item"
+            data-testid={`follower-item-${index}`}
+            key={index}
+          >
             <img src={follower.picture.large} alt={follower.name.first} />
             <div className="followers-details">
               <div className="follower-item-name">
